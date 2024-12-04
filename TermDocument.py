@@ -1,23 +1,24 @@
+import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
+import numpy as np
 
+current_speaker = "#ALL#"
+corpus = []
+df = pd.read_csv("./data/sorted_file.tsv", sep='\t')
+content = ""
+for index, row in df.iterrows():
+    if( row['speaker']==current_speaker):
+        if(pd.notna(row['transcript'])):
+            content += row['transcript']
+    else:
+        corpus.append(content)
+        content = ""
+        current_speaker = row['speaker']
 
-class TermDocument():
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(corpus)
+vectorizer.get_feature_names_out()
 
+U, S, VT = np.linalg.svd(X.toarray(), full_matrices=False)
 
-    def init():
-        cv = CountVectorizer
-        path = "./data/{}.txt"
-        with open(path.format("neg")) as neg_data_f:
-            neg_data = neg_data_f.read().split()
-
-        X = cv.fit_transform(neg_data)
-
-        # Get the feature names (i.e., the terms)
-        feature_names = cv.get_feature_names_out()
-
-        # Create a DataFrame from the DTM
-        import pandas as pd
-        df = pd.DataFrame(X.toarray(), columns=feature_names)
-
-        print(df)
-        
+print(VT)
