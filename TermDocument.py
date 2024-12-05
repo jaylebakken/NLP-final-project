@@ -17,8 +17,9 @@ for index, row in df.iterrows():
 
 vectorizer = CountVectorizer()
 X = vectorizer.fit_transform(corpus)
-vectorizer.get_feature_names_out()
+feat = vectorizer.get_feature_names_out()
 
 U, S, VT = np.linalg.svd(X.toarray(), full_matrices=False)
 
 print(VT)
+print(feat)
