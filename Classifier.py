@@ -1,6 +1,8 @@
 import math
+from matplotlib import pyplot as plt
 import pandas as pd
 import scipy.linalg
+from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 import torch as tor
@@ -56,11 +58,8 @@ class Friends_Classifier():
             if(abs(dist)<least_square):
                 least_square=abs(dist)
                 character_idx=r
-
-
-
-
-        
+    
+    
             
         
         return (friends[character_idx])
