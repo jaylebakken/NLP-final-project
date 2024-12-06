@@ -1,9 +1,11 @@
 import math
 import pandas as pd
+import scipy.linalg
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 import torch as tor
-
+import scipy.sparse
+from scipy.linalg import svd
 
 class Friends_Classifier():
 
@@ -27,8 +29,8 @@ class Friends_Classifier():
         vectorizer = CountVectorizer()
         self.X = vectorizer.fit_transform(corpus)
         self.feat = vectorizer.get_feature_names_out()
-        self.U, self.S, self.VT = np.linalg.svd(self.X.toarray(), full_matrices=False)
-
+        self.U, self.S, self.VT = scipy.linalg.svd(self.X.toarray(), full_matrices=False)
+       
         pass
 
     def What_friends_character_are_you(self, string_corpus):
@@ -41,25 +43,31 @@ class Friends_Classifier():
                 idx = np.where(self.feat==w) 
                 tf[idx[0].item()]+=1
 
-        ##Perform least squares on every document in the right eigenspace
+        
+        print(self.VT.shape)
+        #Perform least squares on every document in the right eigenspace
+        friends=["chandler","joey","monica","rachel","pheobe","ross"]
+        friends_idx=[101,308,420,504,486,524]
         character_idx = 0
         least_square=10000000000
-        for r in range(len(self.VT)):
-            dist = np.dot(np.transpose(tf),self.VT[r])
-            print("character = ",self.speakers[r]," score = ",dist)
+        for r in range(len(friends)):
+            dist = np.dot(np.transpose(tf),(self.VT[[friends_idx[r]]][0]))
+            print("character = ",friends_idx[r]," score = ", dist)
             if(abs(dist)<least_square):
-                character_idx=r
                 least_square=abs(dist)
+                character_idx=r
+
+
 
 
         
             
         
-        return tuple([self.speakers[character_idx]])
+        return (friends[character_idx])
     
 def main():
     fc = Friends_Classifier()
-    chandler=fc.What_friends_character_are_you("Finally, I figure I'd better answer it, and it turns out it's my mother, which is very-very weird, because- she never calls me!")
+    chandler=fc.What_friends_character_are_you("")
     print(chandler)
 
 if __name__ == "__main__":
