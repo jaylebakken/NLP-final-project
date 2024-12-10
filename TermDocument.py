@@ -2,24 +2,14 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 
-current_speaker = "#ALL#"
-corpus = []
-df = pd.read_csv("./data/sorted_file.tsv", sep='\t')
-content = ""
-for index, row in df.iterrows():
-    if( row['speaker']==current_speaker):
-        if(pd.notna(row['transcript'])):
-            content += row['transcript']
-    else:
-        corpus.append(content)
-        content = ""
-        current_speaker = row['speaker']
+df = pd.read_csv('./data/Test_data.tsv', sep='\t')  # Specify '\t' as the separator for TSV
 
-vectorizer = CountVectorizer()
-X = vectorizer.fit_transform(corpus)
-feat = vectorizer.get_feature_names_out()
+#
+valid_speakers = ["Chandler Bing","Monica Geller", "Ross Geller","Rachel Green","Joey Tribbiani","Phoebe Buffay"]
+df_filtered = df[df['speaker'].isin(valid_speakers)]
 
-U, S, VT = np.linalg.svd(X.toarray(), full_matrices=False)
+# Step 2: Sort the DataFrame by the "speaker" column
+df_sorted = df_filtered.sort_values(by='speaker')
 
-print(VT)
-print(feat)
+# Step 3: (Optional) Save the sorted DataFrame back to a TSV file
+df_sorted.to_csv('./data/sorted_test_data.tsv', sep='\t', index=False)
