@@ -38,7 +38,6 @@ class Friends_Classifier():
         self.vectorizer = CountVectorizer()
         self.X = self.vectorizer.fit_transform(corpus)
         print((self.X.shape))
-        ## Feature names stored in instance variable for later use
         self.feat = self.vectorizer.get_feature_names_out()
         ## Constructs the SVD, with matrices U, S and VT
         self.U, self.S, self.VT = scipy.linalg.svd(self.X.toarray())
@@ -106,16 +105,8 @@ def main():
     total = 0
     boys = ["Chandler Bing","Joey Tribbiani","Ross Geller"]
     girls = ["Rachel Green","Monica Geller", "Phoebe Buffay"]
-    for index, row in df.iterrows():
-            if(row['transcript']!=[]):
-                if( row['speaker'])==(fc.What_friends_character_are_you(row['transcript'])):
-                    correct+=1
-                total+=1
-                print(total," <- row ->", fc.What_friends_character_are_you(row['transcript']))
 
-    print("total accuracy... ", correct/total)
-
-
+    ##Construct query vectors
     speakers = []
     current_speaker = "Chandler Bing"
     corpus = []
@@ -135,11 +126,12 @@ def main():
         
     
     for friend in range(len(speakers)):
-        print("running" , speakers[friend])
-        print(fc.What_friends_character_are_you(corpus[friend]))
-        if speakers[friend]==fc.What_friends_character_are_you(corpus[friend]):
+        if speakers[friend] and fc.What_friends_character_are_you(corpus[friend]) in boys:
             correct+=1
-    print(correct)
+        if speakers[friend] and fc.What_friends_character_are_you(corpus[friend]) in girls:
+            correct+=1
+        total+=1         
+    print("S10 accuracy...", correct/total)
 
 
 
